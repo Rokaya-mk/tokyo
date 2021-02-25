@@ -20,7 +20,7 @@ class CreateTasksTable extends Migration
             $table->string('name');
             $table->integer('status')->default(0) ;//status ==0 if tasks not completed
             $table->date('date_task');
-            $table->unsignedBigInteger('user_id');
+            $table->integer('user_id')->unsigned();;
             $table->timestamps();
             $table->foreign('user_id')
             ->references('id')
