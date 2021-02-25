@@ -83,20 +83,20 @@ class TaskController extends BaseController
         return $this->sendResponse($task,'success');
     }
 
-
-    public function edit($id)
+    public function markDone($id)
     {
-        //
+        $errorMessage = [] ;
+        $task = Task::find($id);
+        if ($task->user_id == Auth::id()){
+            $task->status=1;
+            $task->save();
+            return $this->sendResponse(new ResourcesTask($task), 'task is marked as completed now' );
+        }
+        return $this->sendError('you don\'t have rights' , $errorMessage);
+
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function mergeTasks()
     {
         //
     }
