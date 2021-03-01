@@ -1,15 +1,19 @@
 <?php
 
 namespace App\Http\Controllers\API;
-
+use App\Models\Task;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
-use App\Http\Resources\Task as ResourcesTask;
-use App\Models\Task;
+use App\Http\Resources\TaskResources;
+
 use  Carbon\Carbon;
+use DateTime;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Validator;
+
+use function PHPSTORM_META\map;
 
 class TaskController extends BaseController
 {
@@ -20,7 +24,7 @@ class TaskController extends BaseController
                 ->where('date_task',$dt->toDateString())
                 ->get() ;
         if(count($tasks) > 0){
-            return $this->sendResponse(ResourcesTask::collection($tasks), 'success' );
+            return $this->sendResponse(TaskResources::collection($tasks),$dt );
         }
         else  {
             return $this->sendError('today Tasks list is empty' );
@@ -35,7 +39,7 @@ class TaskController extends BaseController
                 ->where('date_task',$tommorowDate->toDateString())
                 ->get() ;
         if(count($tasks) > 0){
-            return $this->sendResponse(ResourcesTask::collection($tasks), 'success' );
+            return $this->sendResponse(TaskResources::collection($tasks), 'success' );
         }
         else  {
             return $this->sendError('Tomorrow Tasks list is empty' );
@@ -90,15 +94,49 @@ class TaskController extends BaseController
         if ($task->user_id == Auth::id()){
             $task->status=1;
             $task->save();
-            return $this->sendResponse(new ResourcesTask($task), 'task is marked as completed now' );
+            return $this->sendResponse(new TaskResources($task), 'task is marked as completed now' );
         }
         return $this->sendError('you don\'t have rights' , $errorMessage);
 
     }
 
-    public function mergeTasks()
+    public function UncheckeTask($id)
     {
-        //
+        $errorMessage = [] ;
+        $task = Task::find($id);
+        if ($task->user_id == Auth::id()){
+            $task->status=0;
+            $task->save();
+            return $this->sendResponse(new TaskResources($task), 'task is marked as ongoing now' );
+        }
+        return $this->sendError('you don\'t have rights' , $errorMessage);
+
+    }
+
+    public function mergeTasks(Request $request)
+    {   $errorMessage = [] ;
+        $deadline = '14:20:00';
+        $dadel =  date('H:i:s', strtotime( '14:20:00'));
+        $date = date('H:i:s', strtotime($request));
+        $d= date('Y-m-d', strtotime($request));
+        if(date('H:i:s',strtotime($deadline))>=date('H:i:s',strtotime($request))){
+
+
+            $tasks=Task::where('user_id' ,Auth::id())
+                        ->where('status',0)
+                        ->Where('date_task',$d)
+                        ->get();
+
+            foreach($tasks as $task){
+                $task->date_task=Carbon::parse($task->date_task)->addDay();
+
+                $task->save();
+            }
+            return $this->sendResponse(TaskResources::collection($tasks),'ok');
+
+         }else{
+            return $this->sendError('Error' , $errorMessage);
+           }
     }
 
     /**
@@ -116,7 +154,7 @@ class TaskController extends BaseController
             } else {
                     if(!is_null($task)){
                         $task->delete();
-                        return $this->sendResponse(new ResourcesTask($task),'task delete successfully');
+                        return $this->sendResponse(new TaskResources($task),'task delete successfully');
                     }
                     else
                         return $this->sendError('Error ' , $errorMessage);
