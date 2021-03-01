@@ -44,7 +44,8 @@ class AuthController extends Controller
          if(!Auth::attempt($loginData)) {
              return response(['message'=>'Invalid credentials']);
          }
-         $user=Auth::user();
+         //$user=Auth::user();
+         $user = User::where('email', $request->email)->first();
          $accessToken = $user->createToken('authToken')->accessToken;
 
          return response(['user' => auth()->user(), 'access_token' => $accessToken]);

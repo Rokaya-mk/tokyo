@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Auth\VerifiesEmails;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\Auth;
 
 class VerificationController extends Controller
 {
@@ -63,7 +64,7 @@ class VerificationController extends Controller
      */
     public function verify(Request $request)
     {
-        auth()->loginUsingId($request->route('id'));
+        Auth::loginUsingId();($request->route('id'));
 
         if ($request->route('id') != $request->user()->getKey()) {
             throw new AuthorizationException;

@@ -6,9 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Http\Resources\TaskResources;
-
 use  Carbon\Carbon;
-use DateTime;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Validator;
@@ -18,8 +16,12 @@ use function PHPSTORM_META\map;
 class TaskController extends BaseController
 {
 
-    public function displayTodayTasks()
-    {   $dt = Carbon::now();
+    public function displayTodayTasks(Request $request)
+    {
+        $timezone=$request->timeZone;
+        $dt=new Carbon();
+        $dt->setTimezone($timezone);
+        //$dt = Carbon::now();
         $tasks=Task::where('user_id' ,Auth::id())
                 ->where('date_task',$dt->toDateString())
                 ->get() ;
@@ -31,9 +33,11 @@ class TaskController extends BaseController
         }
 
     }
-    public function displayTomorrowTasks()
+    public function displayTomorrowTasks(Request $request)
     {
-        $dt = Carbon::now();
+        $timezone=$request->timeZone;
+        $dt=new Carbon();
+        $dt->setTimezone($timezone);
         $tommorowDate=$dt->addDay();
         $tasks=Task::where('user_id' ,Auth::id())
                 ->where('date_task',$tommorowDate->toDateString())
@@ -48,7 +52,10 @@ class TaskController extends BaseController
 
     public function storeTodayTask(Request $request)
     {
-        $dt = Carbon::now()->toDateString();
+        $timezone=$request->timeZone;
+        $carbon=new Carbon();
+        $carbon->setTimezone($timezone);
+        $dt = $carbon->toDateString();
         $input = $request->all();
         $validator = Validator::make($input,[
             'name'=>'required'
@@ -68,7 +75,10 @@ class TaskController extends BaseController
 
     public function storeTomorrowTask(Request $request)
     {
-        $dt = Carbon::now();
+        $timezone=$request->timeZone;
+        $dt=new Carbon();
+        $dt->setTimezone($timezone);
+        //$dt=$carbon;
         $tommorowDate=$dt->addDay()->toDateString();
         $input = $request->all();
         $validator = Validator::make($input,[
@@ -116,8 +126,8 @@ class TaskController extends BaseController
     public function mergeTasks(Request $request)
     {   $errorMessage = [] ;
         $deadline = '14:20:00';
-        $dadel =  date('H:i:s', strtotime( '14:20:00'));
-        $date = date('H:i:s', strtotime($request));
+        // $dadel =  date('H:i:s', strtotime( '14:20:00'));
+        // $date = date('H:i:s', strtotime($request));
         $d= date('Y-m-d', strtotime($request));
         if(date('H:i:s',strtotime($deadline))>=date('H:i:s',strtotime($request))){
 
