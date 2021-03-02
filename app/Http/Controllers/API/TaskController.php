@@ -125,24 +125,30 @@ class TaskController extends BaseController
 
     public function mergeTasks(Request $request)
     {   $errorMessage = [] ;
-        $deadline = '14:20:00';
+        //$deadline = '11:15:00';
+        $timezone=$request->timeZone;
+        $dt=new Carbon();
+        $dt->setTimezone($timezone);
+        $deadline = new Carbon( '09:15:00');
+        $newDate=$dt->addDay()->toDateString();
+
         // $dadel =  date('H:i:s', strtotime( '14:20:00'));
         // $date = date('H:i:s', strtotime($request));
-        $d= date('Y-m-d', strtotime($request));
-        if(date('H:i:s',strtotime($deadline))>=date('H:i:s',strtotime($request))){
+       // $d= date('Y-m-d', strtotime($request));
+        if( $deadline->lessThanOrEqualTo($dt)){
 
 
             $tasks=Task::where('user_id' ,Auth::id())
                         ->where('status',0)
-                        ->Where('date_task',$d)
+                        ->Where('date_task',$dt->toDateString())
                         ->get();
 
             foreach($tasks as $task){
-                $task->date_task=Carbon::parse($task->date_task)->addDay();
+                $task->date_task=Carbon::parse($newDate);
 
                 $task->save();
             }
-            return $this->sendResponse(TaskResources::collection($tasks),'ok');
+            return $this->sendResponse(TaskResources::collection($tasks),$newDate);
 
          }else{
             return $this->sendError('Error' , $errorMessage);
