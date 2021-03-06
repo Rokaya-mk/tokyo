@@ -23,16 +23,13 @@ Route::get('/verified-only', function(Request $request){
 })->middleware('auth:api','verified');
 
 
- //Route::post('register', 'App\Http\Controllers\Api\AuthController@register');
 
-//Route::post('/register', 'App\Http\Controllers\Api\AuthController@register');
 Route::post('/register', 'Api\AuthController@register');
- //Route::get('/register', [AuthController::class, 'register']);
+
  Route::post('login', 'Api\AuthController@login');
- //Route::post('logout','Api\AuthController@logoutApi');
- //Route::post('logout','Api\AuthController@logout');
+
  Route::middleware('auth:api')-> post('logout','Api\AuthController@logoutApi');
-//  Route::middleware('auth:api')-> post('logout','Api\AuthController@logout');
+
 
  Route::post('/password/email', 'Api\ForgotPasswordController@sendResetLinkEmail');
  Route::post('/password/reset', 'Api\ResetPasswordController@reset');
@@ -43,8 +40,8 @@ Route::post('/register', 'Api\AuthController@register');
 Route::get('/email/verify/{id}/{hash}', 'Api\VerificationController@verify')->name('verification.verify');
 
  Route::middleware('auth:api')->group( function (){
-    Route::get('tasks/todayTask', 'Api\TaskController@displayTodayTasks');
-    Route::get('tasks/tomorrowTask', 'Api\TaskController@displayTomorrowTasks');
+    Route::post('tasks/todayTask', 'Api\TaskController@displayTodayTasks');
+    Route::post('tasks/tomorrowTask', 'Api\TaskController@displayTomorrowTasks');
     Route::post('tasks/storeToday', 'Api\TaskController@storeTodayTask');
     Route::post('tasks/storeTomorrow', 'Api\TaskController@storeTomorrowTask');
     Route::put('tasks/markDone/{id}', 'Api\TaskController@markDone');
