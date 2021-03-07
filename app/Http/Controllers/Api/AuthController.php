@@ -29,7 +29,7 @@ class AuthController extends Controller
     $user = User::create($input);
     $accessToken = $user->createToken('authToken')->accessToken;
      $email= $input['email'];
-    return response()->json(['access_token'=> $accessToken,'email' =>$email]);
+    return response()->json(['access_token'=> $accessToken]);
     }
 
 
