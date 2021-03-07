@@ -42,14 +42,14 @@ class VerificationController extends Controller
         if ($request->user()->hasVerifiedEmail()) {
 
 
-            return response(['message'=>'Already verified',$request->email]);
+            return response(['message'=>'Already verified','email'=>$request->email]);
         }
 
         $request->user()->sendEmailVerificationNotification();
 
         if ($request->wantsJson()) {
 
-            return response(['message' => 'Email Sent' , $request->email]);
+            return response(['message' => 'Email Sent' , 'email'=>$request->email]);
              //return response()->json(['message' => 'Email Sent']);
         }
 
