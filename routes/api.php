@@ -35,9 +35,9 @@ Route::post('/register', 'Api\AuthController@register');
  Route::post('/password/reset', 'Api\ResetPasswordController@reset');
 
 
- Route::post('/email/resend', 'Api\VerificationController@resend')->name('verification.resend');
+//  Route::post('/email/resend', 'Api\VerificationController@resend')->name('verification.resend');
 
-Route::get('/email/verify/{id}/{hash}', 'Api\VerificationController@verify')->name('verification.verify');
+// Route::get('/email/verify/{id}/{hash}', 'Api\VerificationController@verify')->name('verification.verify');
 
  Route::middleware('auth:api')->group( function (){
     Route::post('tasks/todayTask', 'Api\TaskController@displayTodayTasks');
