@@ -42,7 +42,7 @@ class VerificationController extends Controller
         if ($request->user()->hasVerifiedEmail()) {
 
 
-            return response(['message'=>'Already verified','email'=>$request->user()->email]);
+            return response(['message'=>'Already verified','email'=>$request->email]);
         }
 
         $request->user()->sendEmailVerificationNotification();
